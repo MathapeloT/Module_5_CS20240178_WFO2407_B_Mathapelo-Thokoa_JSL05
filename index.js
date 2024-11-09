@@ -23,29 +23,50 @@ const songs = [
 
 // Object containing each Guardian's preferred genre
 const guardians = {
-   "name": "Star-Lord", "preferred_genre": "Rock",
-    "name": "Gamora", "preferred_genre" "Pop",
-    "Drax" : "R&B",
-    "Rocket" : "Rock",
-    "Groot" : "Pop",
+   "Star-Lord": "Rock",
+   "Gamora": "Pop",
+   "Drax": "R&B",
+   "Rocket": "Rock",
+   "Groot": "Pop",
     // Add preferences for Drax, Rocket, and Groot
 };
 
 // Function to generate playlist based on preferred genre
 function generatePlaylist(guardians, songs) {
     // Use the map() function to create playlists for each Guardian
-    const playlists = {}
+    return Object.entries(guardians).map(([guardian,preferredGenre]) => {
+      const playlist = songs.filter(song => song.genre === preferredGenre);
+      return {
+        guardian, preferredGenre, playlist
+      };
+    });
+}
 
-    for (const guardian in guardians) {
-      const genre = guardians[guardian];
-      playlists[guardian] = songs.filter((song) => song.genre === genre);
-    }
-  
-    return playlists;
-  }
+function displayPlaylist () {
+  const playlistsContainer = document.getElementById('playlists');
+  const guardianPlaylists = generatePlaylist(guardians, songs);
 
+  guardianPlaylists.forEach(({ guardian, playlist }) => {
+    const playlistElement = document.createElement('div');
+    playlistElement.className = 'playlist';
 
-// Call generatePlaylist and display the playlists for each Guardian
-generatePlaylist(guardians, songs);
+    const playlistTitle = document.createElement('h2');
+    playlistTitle.textContent = `${guardian}'s Playlist`;
+    playlistElement.appendChild(playlistTitle);
 
+    const songList = document.createElement('ul');
+    playlist.forEach(song => {
+      const listItem = document.createElement('li');
+      const songTitle = document.createElement('span');
+      songTitle.className = 'song-title';
+      songTitle.textContent = song.title;
+      listItem.appendChild(songTitle);
+      listItem.appendChild(document.createTextNode(` by ${song.artist}`));
+      songList.appendChild(listItem);
+    });
+  playlistElement.appendChild(songList);
+  playlistsContainer.appendChild(playlistElement);
+  })
+}
 
+window.onload = displayPlaylist;
